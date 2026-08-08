@@ -61,6 +61,14 @@
 #include <riscv_vector.h>
 #endif
 
+#if defined(__loongarch_sx)
+#include <lsxintrin.h>
+#endif
+
+#if defined(__loongarch_asx)
+#include <lasxintrin.h>
+#endif
+
 #if defined(__VSX__)
 #include <altivec.h>
 #endif
@@ -169,6 +177,56 @@ typedef Sleef___m512_2 vfloat2;
 #define CONFIG 1
 #include "helpervecext.h"
 #include "norename.h"
+#endif
+
+// LoongArch
+
+#ifdef ENABLE_LSX
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 1
+#include "helperlsx.h"
+#endif
+#include "renamelsx.h"
+#if !defined(USE_INLINE_HEADER)
+typedef Sleef___m128d_2 vdouble2;
+typedef Sleef___m128_2 vfloat2;
+#undef xldexp
+#define xldexp(x, q) Sleef_ldexpd2_lsx((__m128d)(x), (__m128i)(q))
+#undef xilogb
+#define xilogb(x) ((vint)Sleef_ilogbd2_lsx((__m128d)(x)))
+#undef xexpfrexp
+#define xexpfrexp(x) ((vint)Sleef_expfrexpd2_lsx((__m128d)(x)))
+#undef xldexpf
+#define xldexpf(x, q) Sleef_ldexpf4_lsx((__m128)(x), (__m128)(q))
+#undef xilogbf
+#define xilogbf(x) ((vint2)Sleef_ilogbf4_lsx((__m128)(x)))
+#undef xexpfrexpf
+#define xexpfrexpf(x) ((vint2)Sleef_expfrexpf4_lsx((__m128)(x)))
+#endif
+#endif
+
+#ifdef ENABLE_LASX
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 1
+#include "helperlasx.h"
+#endif
+#include "renamelasx.h"
+#if !defined(USE_INLINE_HEADER)
+typedef Sleef___m256d_2 vdouble2;
+typedef Sleef___m256_2 vfloat2;
+#undef xldexp
+#define xldexp(x, q) Sleef_ldexpd4_lasx((__m256d)(x), (__m128i)(q))
+#undef xilogb
+#define xilogb(x) ((vint)Sleef_ilogbd4_lasx((__m256d)(x)))
+#undef xexpfrexp
+#define xexpfrexp(x) ((vint)Sleef_expfrexpd4_lasx((__m256d)(x)))
+#undef xldexpf
+#define xldexpf(x, q) Sleef_ldexpf8_lasx((__m256)(x), (__m256)(q))
+#undef xilogbf
+#define xilogbf(x) ((vint2)Sleef_ilogbf8_lasx((__m256)(x)))
+#undef xexpfrexpf
+#define xexpfrexpf(x) ((vint2)Sleef_expfrexpf8_lasx((__m256)(x)))
+#endif
 #endif
 
 #ifdef ENABLE_PUREC

@@ -155,6 +155,24 @@ extern const double Sleef_rempitabdp[];
 #endif /* DORENAME */
 #endif /* ENABLE_SVE */
 
+// LoongArch
+
+#ifdef ENABLE_LSX
+#define CONFIG 1
+#include "helperlsx.h"
+#ifdef DORENAME
+#include "renamelsx.h"
+#endif
+#endif
+
+#ifdef ENABLE_LASX
+#define CONFIG 1
+#include "helperlasx.h"
+#ifdef DORENAME
+#include "renamelasx.h"
+#endif
+#endif
+
 // IBM
 
 #ifdef ENABLE_VSX

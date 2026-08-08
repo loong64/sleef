@@ -32,6 +32,9 @@ set(TESTER3_DEFINITIONS_RVVM1NOFMA ATR=cinz_ DPTYPE=vfloat64m1_t SPTYPE=vfloat32
 set(TESTER3_DEFINITIONS_RVVM2      ATR=finz_ DPTYPE=vfloat64m2_t SPTYPE=vfloat32m2_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=rvvm2 ENABLE_RVVM2)
 set(TESTER3_DEFINITIONS_RVVM2NOFMA ATR=cinz_ DPTYPE=vfloat64m2_t SPTYPE=vfloat32m2_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=rvvm2nofma ENABLE_RVVM2)
 
+set(TESTER3_DEFINITIONS_LSX       ATR=finz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=lsx)
+set(TESTER3_DEFINITIONS_LASX      ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8 EXTSPEC=lasx)
+
 set(TESTER3_DEFINITIONS_PUREC_SCALAR    ATR=cinz_ DPTYPE=double SPTYPE=float DPTYPESPEC=d1 SPTYPESPEC=f1 EXTSPEC=purec)
 set(TESTER3_DEFINITIONS_PURECFMA_SCALAR ATR=finz_ DPTYPE=double SPTYPE=float DPTYPESPEC=d1 SPTYPESPEC=f1 EXTSPEC=purecfma)
 
@@ -46,6 +49,9 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   set(TEST3_CINZ purec_scalar)
   set(TEST3_FINZ purecfma_scalar)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "loongarch64")
+  set(TEST3_CINZ purec_scalar)
+  set(TEST3_FINZ purecfma_scalar lsx lasx)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(TEST3_CINZ purec_scalar vsxnofma vsx3nofma)
   set(TEST3_FINZ purecfma_scalar vsx vsx3)
@@ -441,6 +447,37 @@ endmacro(test_extension)
 foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
   test_extension(${SIMD})
 endforeach()
+
+# The regular libm testers exercise the final numerical result, but do not
+# reliably expose a lane permutation error. Keep these helper-level checks
+# separate and run them only on LoongArch targets that support the ISA.
+if (SLEEF_ARCH_LOONGARCH64 AND COMPILER_SUPPORTS_LSX)
+  add_executable(helper_lane_layout_lsx testerloonglane.c
+    ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+  target_compile_options(helper_lane_layout_lsx PRIVATE ${FLAGS_ENABLE_LSX})
+  target_compile_definitions(helper_lane_layout_lsx PRIVATE TEST_LSX=1)
+  target_include_directories(helper_lane_layout_lsx PRIVATE
+    ${sleef_SOURCE_DIR}/src/arch
+    ${sleef_SOURCE_DIR}/src/common
+    ${sleef_BINARY_DIR}/include)
+  set_target_properties(helper_lane_layout_lsx PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  add_dependencies(helper_lane_layout_lsx ${TARGET_HEADERS})
+  add_test_with_emu(0.1 helper_lane_layout_lsx)
+endif()
+
+if (SLEEF_ARCH_LOONGARCH64 AND COMPILER_SUPPORTS_LASX)
+  add_executable(helper_lane_layout_lasx testerloonglane.c
+    ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+  target_compile_options(helper_lane_layout_lasx PRIVATE ${FLAGS_ENABLE_LASX})
+  target_compile_definitions(helper_lane_layout_lasx PRIVATE TEST_LASX=1)
+  target_include_directories(helper_lane_layout_lasx PRIVATE
+    ${sleef_SOURCE_DIR}/src/arch
+    ${sleef_SOURCE_DIR}/src/common
+    ${sleef_BINARY_DIR}/include)
+  set_target_properties(helper_lane_layout_lasx PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  add_dependencies(helper_lane_layout_lasx ${TARGET_HEADERS})
+  add_test_with_emu(0.1 helper_lane_layout_lasx)
+endif()
 
 function(add_gnuabi_compatibility_test SIMD MASKED)
   if (MASKED)

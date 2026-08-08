@@ -73,6 +73,10 @@ option(SLEEF_DISABLE_AVX512F "Disable AVX512F" OFF)
 option(SLEEF_ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_SVE "Disable SVE" OFF)
 option(SLEEF_ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_LSX "Disable LSX" OFF)
+option(SLEEF_ENFORCE_LSX "Build fails if LSX is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_LASX "Disable LASX" OFF)
+option(SLEEF_ENFORCE_LASX "Build fails if LASX is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_VSX "Disable VSX" OFF)
 option(SLEEF_ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_VSX3 "Disable VSX3" OFF)
@@ -159,6 +163,7 @@ set(SLEEF_ALL_SUPPORTED_EXTENSIONS
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
   RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
+  LSX LASX                                              # LoongArch Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -170,6 +175,7 @@ set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
   RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
+  LSX LASX                                              # LoongArch Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )

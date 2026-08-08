@@ -38,6 +38,14 @@ elseif(SLEEF_ARCH_AARCH32)
     PURECFMA_SCALAR
     DSP_SCALAR
   )
+elseif(SLEEF_ARCH_LOONGARCH64)
+  set(SLEEF_HEADER_LIST
+    LSX
+    LASX
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+    DSP_SCALAR
+  )
 elseif(SLEEF_ARCH_PPC64)
   set(SLEEF_HEADER_LIST
     VSX_
@@ -112,6 +120,9 @@ command_arguments(HEADER_PARAMS_RVVM1NOFMA      cinz_ x x vfloat64m1_t vfloat32m
 command_arguments(HEADER_PARAMS_RVVM2           finz_ x x vfloat64m2_t vfloat32m2_t vint32m1_t vint32m2_t __riscv_v rvvm2)
 command_arguments(HEADER_PARAMS_RVVM2NOFMA      cinz_ x x vfloat64m2_t vfloat32m2_t vint32m1_t vint32m2_t __riscv_v rvvm2nofma)
 
+command_arguments(HEADER_PARAMS_LSX             finz_ 2 4 __m128d __m128 __m128i __m128i __loongarch_sx lsx)
+command_arguments(HEADER_PARAMS_LASX            finz_ 4 8 __m256d __m256 __m128i __m256i __loongarch_asx lasx)
+
 command_arguments(HEADER_PARAMS_DSP_SCALAR      -     1 1 double float int32_t int32_t __STDC__)
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
 command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t int32_t __STDC__ purecfma)
@@ -162,6 +173,8 @@ command_arguments(RENAME_PARAMS_RVVM1           finz_ x x rvvm1)
 command_arguments(RENAME_PARAMS_RVVM1NOFMA      cinz_ x x rvvm1nofma)
 command_arguments(RENAME_PARAMS_RVVM2           finz_ x x rvvm2)
 command_arguments(RENAME_PARAMS_RVVM2NOFMA      cinz_ x x rvvm2nofma)
+command_arguments(RENAME_PARAMS_LSX             finz_ 2 4 lsx)
+command_arguments(RENAME_PARAMS_LASX            finz_ 4 8 lasx)
 
 # ALIAS_PARAMS
 

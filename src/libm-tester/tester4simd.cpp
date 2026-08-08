@@ -62,6 +62,14 @@ using namespace std;
 #include <altivec.h>
 #endif
 
+#if defined(__loongarch_sx)
+#include <lsxintrin.h>
+#endif
+
+#if defined(__loongarch_asx)
+#include <lasxintrin.h>
+#endif
+
 #if defined(__VX__)
 #include <vecintrin.h>
 #endif
@@ -163,6 +171,50 @@ typedef Sleef___m512_2 vfloat2;
 #define CONFIG 1
 #include "helpervecext.h"
 #include "norename.h"
+#endif
+
+// LoongArch
+
+#ifdef ENABLE_LSX
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 1
+#include "helperlsx.h"
+#endif
+#include "renamelsx.h"
+#if !defined(USE_INLINE_HEADER)
+typedef Sleef___m128d_2 vdouble2;
+typedef Sleef___m128_2 vfloat2;
+#undef xldexp
+static vdouble sleef_xldexp_lsx(vdouble x, vint q) { return (vdouble)Sleef_ldexpd2_lsx((__m128d)x, (__m128i)q); }
+#define xldexp sleef_xldexp_lsx
+#undef xilogb
+static vint sleef_xilogb_lsx(vdouble x) { return (vint)Sleef_ilogbd2_lsx((__m128d)x); }
+#define xilogb sleef_xilogb_lsx
+#undef xexpfrexp
+static vint sleef_xexpfrexp_lsx(vdouble x) { return (vint)Sleef_expfrexpd2_lsx((__m128d)x); }
+#define xexpfrexp sleef_xexpfrexp_lsx
+#endif
+#endif
+
+#ifdef ENABLE_LASX
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 1
+#include "helperlasx.h"
+#endif
+#include "renamelasx.h"
+#if !defined(USE_INLINE_HEADER)
+typedef Sleef___m256d_2 vdouble2;
+typedef Sleef___m256_2 vfloat2;
+#undef xldexp
+static vdouble sleef_xldexp_lasx(vdouble x, vint q) { return (vdouble)Sleef_ldexpd4_lasx((__m256d)x, (__m128i)q); }
+#define xldexp sleef_xldexp_lasx
+#undef xilogb
+static vint sleef_xilogb_lasx(vdouble x) { return (vint)Sleef_ilogbd4_lasx((__m256d)x); }
+#define xilogb sleef_xilogb_lasx
+#undef xexpfrexp
+static vint sleef_xexpfrexp_lasx(vdouble x) { return (vint)Sleef_expfrexpd4_lasx((__m256d)x); }
+#define xexpfrexp sleef_xexpfrexp_lasx
+#endif
 #endif
 
 #ifdef ENABLE_PUREC
