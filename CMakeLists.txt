@@ -37,6 +37,10 @@ option(SLEEF_ENABLE_CXX "Enable C++" OFF)
 
 option(SLEEF_BUILD_WITH_LIBM "build libsleef with libm, can turn off on Windows to solve mutiple math functions issue." ON)
 
+option(SLEEF_DISABLE_LSX "Disable LSX" OFF)
+option(SLEEF_ENFORCE_LSX "Build fails if LSX is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_LASX "Disable LASX" OFF)
+option(SLEEF_ENFORCE_LASX "Build fails if LASX is not supported by the compiler" OFF)
 #
 
 if (SLEEF_BUILD_BENCH)
@@ -102,6 +106,7 @@ set(SLEEF_ALL_SUPPORTED_EXTENSIONS
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
   RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
+  LSX LASX                                              # LoongArch Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -113,6 +118,7 @@ set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
   RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
+  LSX LASX                                              # LoongArch Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -358,4 +364,3 @@ if(SLEEF_SHOW_CONFIG)
     message(STATUS "Building SLEEF with AArch64 Vector PCS support")
   endif()
 endif(SLEEF_SHOW_CONFIG)
-

@@ -18,7 +18,11 @@
 typedef struct { uint64_t x, y; } Sleef_uint64_2t;
 #if defined(SLEEF_FLOAT128_IS_IEEEQP) || defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
+#if defined(__loongarch__)
+#define SLEEF_QUAD_C(x) (x ## f128)
+#else
 #define SLEEF_QUAD_C(x) (x ## Q)
+#endif
 #elif defined(SLEEF_LONGDOUBLE_IS_IEEEQP)
 typedef long double Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## L)
@@ -87,7 +91,11 @@ SLEEFSHARPdefine SLEEFXXXSleef_quad_DEFINED
 typedef struct { uint64_t x, y; } Sleef_uint64_2t;
 SLEEFSHARPif defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP)
 typedef __float128 Sleef_quad;
+SLEEFSHARPif __loongarch__
+SLEEFSHARPdefine SLEEFXXXSLEEF_QUAD_C(x) (x ## f128)
+SLEEFSHARPelse
 SLEEFSHARPdefine SLEEFXXXSLEEF_QUAD_C(x) (x ## Q)
+SLEEFSHARPendif
 SLEEFSHARPelif defined(SLEEFXXXSLEEF_LONGDOUBLE_IS_IEEEQP)
 typedef long double Sleef_quad;
 SLEEFSHARPdefine SLEEFXXXSLEEF_QUAD_C(x) (x ## L)

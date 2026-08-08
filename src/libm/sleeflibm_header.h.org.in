@@ -21,7 +21,7 @@
 #define SLEEF_INLINE __forceinline
 #endif
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__loongarch64) || defined(__powerpc64__) || defined(__zarch__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
 #endif
@@ -61,6 +61,14 @@
 
 #if defined(__ARM_FEATURE_SVE)
 #include <arm_sve.h>
+#endif
+
+#if defined(__loongarch_sx)
+#include <lsxintrin.h>
+#endif
+
+#if defined(__loongarch_asx)
+#include <lasxintrin.h>
 #endif
 
 #if defined(__VSX__) && defined(__PPC64__) && defined(__LITTLE_ENDIAN__)
@@ -177,7 +185,11 @@ typedef struct {
 typedef struct { uint64_t x, y; } Sleef_uint64_2t;
 #if defined(SLEEF_FLOAT128_IS_IEEEQP) || defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
+#if defined(__loongarch__)
+#define SLEEF_QUAD_C(x) (x ## f128)
+#else
 #define SLEEF_QUAD_C(x) (x ## Q)
+#endif
 #elif defined(SLEEF_LONGDOUBLE_IS_IEEEQP)
 typedef long double Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## L)

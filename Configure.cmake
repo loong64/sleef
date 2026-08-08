@@ -126,6 +126,9 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   set(COMPILER_SUPPORTS_NEON32VFPV4 1)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "loongarch64")
+  set(SLEEF_ARCH_LOONGARCH64 ON CACHE INTERNAL "True for LoongArch64 architecture.")
+
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
 
@@ -186,6 +189,9 @@ set(CLANG_FLAGS_ENABLE_RVVM1 "-march=rv64gcv_zba_zbb_zbs")
 set(CLANG_FLAGS_ENABLE_RVVM1NOFMA "-march=rv64gcv_zba_zbb_zbs")
 set(CLANG_FLAGS_ENABLE_RVVM2 "-march=rv64gcv_zba_zbb_zbs")
 set(CLANG_FLAGS_ENABLE_RVVM2NOFMA "-march=rv64gcv_zba_zbb_zbs")
+# LoongArch vector extensions.
+set(CLANG_FLAGS_ENABLE_LSX "-mlsx")
+set(CLANG_FLAGS_ENABLE_LASX "-mlasx")
 
 set(FLAGS_OTHERS "")
 
@@ -544,6 +550,40 @@ endif()
 
 if (SLEEF_ENFORCE_SVE AND NOT COMPILER_SUPPORTS_SVE)
   message(FATAL_ERROR "SLEEF_ENFORCE_SVE is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+# LoongArch vectors
+
+if(SLEEF_ARCH_LOONGARCH64 AND NOT SLEEF_DISABLE_LSX)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_LSX}")
+  CHECK_C_SOURCE_COMPILES("
+  #include <lsxintrin.h>
+  int main() {
+    __m128 d = __lsx_vfadd_s((__m128){ 1, 2, 3, 4 }, (__m128){ 1, 2, 3, 4 });
+  }"
+    COMPILER_SUPPORTS_LSX)
+endif()
+
+if (COMPILER_SUPPORTS_LSX)
+  set(COMPILER_SUPPORTS_LSX 1)
+endif()
+
+if (SLEEF_ENFORCE_LSX AND NOT COMPILER_SUPPORTS_LSX)
+  message(FATAL_ERROR "SLEEF_ENFORCE_LSX is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+if(SLEEF_ARCH_LOONGARCH64 AND NOT SLEEF_DISABLE_LASX)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_LASX}")
+  CHECK_C_SOURCE_COMPILES("
+  #include <lasxintrin.h>
+  int main() {
+    __m256d d = __lasx_xvfadd_d((__m256d){ 1, 2, 3, 4 }, (__m256d){ 1, 2, 3, 4 });
+  }"
+    COMPILER_SUPPORTS_LASX)
+endif()
+
+if (SLEEF_ENFORCE_LASX AND NOT COMPILER_SUPPORTS_LASX)
+  message(FATAL_ERROR "SLEEF_ENFORCE_LASX is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # VSX

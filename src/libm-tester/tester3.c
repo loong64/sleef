@@ -68,6 +68,22 @@ static INLINE float get__m512(__m512 v, int r) { static float a[16]; _mm512_stor
 #endif
 #endif // #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 
+#if defined(__loongarch_sx)
+#include <lsxintrin.h>
+static INLINE __m128d set__m128d(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; __m128d v; memcpy(&v, a, sizeof(v)); return v; }
+static INLINE double get__m128d(__m128d v, int r) { double a[2]; memcpy(a, &v, sizeof(a)); return unifyValue(a[r & 1]); }
+static INLINE __m128 set__m128(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; __m128 v; memcpy(&v, a, sizeof(v)); return v; }
+static INLINE float get__m128(__m128 v, int r) { float a[4]; memcpy(a, &v, sizeof(a)); return unifyValuef(a[r & 3]); }
+#endif
+
+#if defined(__loongarch_asx)
+#include <lasxintrin.h>
+static INLINE __m256d set__m256d(double d, int r) { double a[4]; memrand(a, sizeof(a)); a[r & 3] = d; __m256d v; memcpy(&v, a, sizeof(v)); return v; }
+static INLINE double get__m256d(__m256d v, int r) { double a[4]; memcpy(a, &v, sizeof(a)); return unifyValue(a[r & 3]); }
+static INLINE __m256 set__m256(float d, int r) { float a[8]; memrand(a, sizeof(a)); a[r & 7] = d; __m256 v; memcpy(&v, a, sizeof(v)); return v; }
+static INLINE float get__m256(__m256 v, int r) { float a[8]; memcpy(a, &v, sizeof(a)); return unifyValuef(a[r & 7]); }
+#endif
+
 #if defined(__aarch64__) && defined(__ARM_NEON)
 static INLINE VECTOR_CC float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
 static INLINE VECTOR_CC double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return unifyValue(a[r & 1]); }
